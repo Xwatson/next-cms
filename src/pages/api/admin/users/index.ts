@@ -2,10 +2,55 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { withMiddleware } from "@/middleware/withAuth";
 import { isAdmin, hasPermission } from "@/utils/auth";
+import { UserStatus, UserCreateInput } from "@/types/user";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === "POST") {
+    try {
+      const data = req.body as UserCreateInput;
+      
+      // 验证必填字段
+      if (!data.email || !data.password || !data.roleId) {
+        return res.status(400).json({ message: "邮箱、密码和角色为必填项" });
+      }
+
+      // 检查邮箱是否已存在
+      const existingUser = await prisma.user.findUnique({
+        where: { email: data.email },
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ message: "该邮箱已被注册" });
+      }
+
+      // 密码加密
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+
+      // 创建用户
+      const user = await prisma.user.create({
+        data: {
+          email: data.email,
+          password: hashedPassword,
+          name: data.name || null,
+          avatar: data.avatar || null,
+          phone: data.phone || null,
+          roleId: data.roleId,
+          status: data.status || UserStatus.ACTIVE,
+        },
+      });
+
+      // 移除密码后返回用户信息
+      const { password: _, ...userWithoutPassword } = user;
+      return res.status(201).json(userWithoutPassword);
+    } catch (error) {
+      console.error("创建用户失败:", error);
+      return res.status(500).json({ message: "创建用户失败" });
+    }
+  }
+
   if (req.method !== "GET") {
     return res.status(405).json({ message: "方法不允许" });
   }
@@ -24,7 +69,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         : {}),
       ...(roleId ? { roleId: Number(roleId) } : {}),
-      ...(status ? { status: String(status) } : {}),
+      ...(status ? { status: status as UserStatus } : {}),
     };
 
     // 分页查询

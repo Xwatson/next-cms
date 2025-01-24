@@ -54,15 +54,25 @@ const createRole = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { name, code, description, permissionIds } = req.body;
 
+    // 验证必填字段
+    if (!name || !code) {
+      return res.status(400).json({
+        code: 1,
+        msg: "角色名称和标识为必填项",
+      });
+    }
+
     // 检查角色标识是否已存在
-    const existingRole = await prisma.role.findUnique({
-      where: { code },
+    const existingRole = await prisma.role.findFirst({
+      where: {
+        OR: [{ code }, { name }],
+      },
     });
 
     if (existingRole) {
       return res.status(400).json({
         code: 1,
-        msg: "角色标识已存在",
+        msg: existingRole.code === code ? "角色标识已存在" : "角色名称已存在",
       });
     }
 

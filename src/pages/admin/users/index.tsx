@@ -26,9 +26,10 @@ const UserList = () => {
     setLoading(true);
     try {
       const res = await getUsers({ page, pageSize: size });
-      setUsers(res.list || []);
-      setTotal(res.total || 0);
+      setUsers(res.data?.list || []);
+      setTotal(res.data?.total || 0);
     } catch (error) {
+      console.error("Fetch users error:", error);
       message.error("获取用户列表失败");
     } finally {
       setLoading(false);
@@ -37,9 +38,10 @@ const UserList = () => {
 
   const fetchRoles = async () => {
     try {
-      const res = await getRoles({});
+      const res = await getRoles({page: 1, pageSize: 1000});
       setRoles(res.data?.list || []);
     } catch (error) {
+      console.error("Fetch roles error:", error);
       message.error("获取角色列表失败");
     }
   };

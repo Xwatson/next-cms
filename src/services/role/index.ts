@@ -6,39 +6,29 @@ import {
   QueryRolesResult,
   QueryPermissionsResult,
   Role,
+  Permission,
 } from "./types";
+import { DataResult, PaginationResult } from "@/types/api";
 
 // 角色管理
 export const getRoles = (params: QueryRolesParams) =>
-  request<QueryRolesResult>("/api/admin/roles", {
-    method: "GET",
-    data: params,
+  request.get<DataResult<PaginationResult<Role>>>("/admin/roles", {
+    params,
   });
 
 export const getRoleById = (id: number) =>
-  request<Role>(`/api/admin/roles/${id}`, {
-    method: "GET",
-  });
+  request.get<Role>(`/admin/roles/${id}`);
 
 export const createRole = (params: CreateRoleParams) =>
-  request<Role>("/api/admin/roles", {
-    method: "POST",
-    data: params,
-  });
+  request.post<Role>("/admin/roles", params);
 
 export const updateRole = (params: UpdateRoleParams) =>
-  request<Role>(`/api/admin/roles/${params.id}`, {
-    method: "PUT",
+  request.put<Role>(`/admin/roles/${params.id}`, {
     data: params,
   });
 
-export const deleteRole = (id: number) =>
-  request(`/api/admin/roles/${id}`, {
-    method: "DELETE",
-  });
+export const deleteRole = (id: number) => request.delete(`/admin/roles/${id}`);
 
 // 权限管理
 export const getPermissions = () =>
-  request<QueryPermissionsResult>("/api/admin/permissions", {
-    method: "GET",
-  });
+  request.get<DataResult<PaginationResult<Permission>>>("/admin/permissions");

@@ -23,6 +23,23 @@ const menuItems = [
     label: "控制台",
   },
   {
+    key: "/admin/user_management",
+    icon: <UserOutlined />,
+    label: "用户管理",
+    children: [
+      {
+        key: "/admin/users",
+        icon: <UserOutlined />,
+        label: "用户管理",
+      },
+      {
+        key: "/admin/roles",
+        icon: <UserOutlined />,
+        label: "角色管理",
+      },
+    ],
+  },
+  {
     key: "/admin/content",
     icon: <FileTextOutlined />,
     label: "内容管理",
@@ -36,11 +53,6 @@ const menuItems = [
         label: "分类管理",
       },
     ],
-  },
-  {
-    key: "/admin/users",
-    icon: <UserOutlined />,
-    label: "用户管理",
   },
   {
     key: "/admin/settings",

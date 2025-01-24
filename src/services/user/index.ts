@@ -11,7 +11,7 @@ interface GetUsersParams {
 }
 
 export const getUsers = (params: GetUsersParams) => {
-  return request.get<PaginationResult<User>>("/admin/users", {
+  return request.get<DataResult<PaginationResult<User>>>("/admin/users", {
     params,
   });
 };
