@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+model User {
+  id            Int        @id @default(autoincrement()) @map("user_id")
+  email         String     @unique @map("user_email")
+  name          String?    @map("user_name")
+  password      String     @map("user_password")
+  avatar        String?    @map("user_avatar")
+  phone         String?    @unique @map("user_phone")
+  roleId        Int        @map("role_id")
+  status        UserStatus @default(ACTIVE) @map("user_status")
+  lastLoginTime DateTime?  @map("last_login_time")
+  lastLoginIp   String?    @map("last_login_ip")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  role          Role       @relation(fields: [roleId], references: [id])
+
+  @@index([email])
+  @@index([phone])
+  @@index([roleId])
+  @@map("next_user")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement()) @map("role_id")
+  name        String   @unique @map("role_name")
+  code        String   @unique @map("role_code")
+  description String?  @map("role_description") @db.Text
+  remark      String?  @map("role_remark")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  users       User[]
+  permissions Permission[] @relation("RolePermissions")
+
+  @@index([code])
+  @@map("next_role")
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement()) @map("permission_id")
+  name        String   @map("permission_name")
+  code        String   @unique @map("permission_code")
+  description String?  @map("permission_description") @db.Text
+  roles       Role[]   @relation("RolePermissions")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("next_permissions")
+}
+
+model Video {
+  id            Int       @id @default(autoincrement()) @map("video_id")
+  typeId        Int       @default(0) @map("type_id")
+  typeId1       Int       @default(0) @map("type_id_1")
+  groupId       Int       @default(0) @map("group_id")
+  name          String    @default("") @map("video_name")
+  subTitle      String    @default("") @map("video_sub")
+  enName        String    @default("") @map("video_en")
+  status        Int       @default(0) @map("video_status")
+  letter        String    @default("") @map("video_letter") @db.Char(1)
+  color         String    @default("") @map("video_color") @db.VarChar(6)
+  tag           String    @default("") @map("video_tag")
+  class         String    @default("") @map("video_class")
+  pic           String    @default("") @map("video_pic")
+  picThumb      String    @default("") @map("video_pic_thumb")
+  picSlide      String    @default("") @map("video_pic_slide")
+  picScreenshot String?   @map("video_pic_screenshot") @db.Text
+  actor         String    @default("") @map("video_actor")
+  director      String    @default("") @map("video_director")
+  writer        String    @default("") @map("video_writer")
+  behind        String    @default("") @map("video_behind")
+  blurb         String    @default("") @map("video_blurb")
+  remarks       String    @default("") @map("video_remarks")
+  pubdate       String    @default("") @map("video_pubdate")
+  total         Int       @default(0) @map("video_total")
+  serial        String    @default("0") @map("video_serial")
+  tv            String    @default("") @map("video_tv")
+  weekday       String    @default("") @map("video_weekday")
+  area          String    @default("") @map("video_area")
+  lang          String    @default("") @map("video_lang")
+  year          String    @default("") @map("video_year")
+  version       String    @default("") @map("video_version")
+  state         String    @default("") @map("video_state")
+  author        String    @default("") @map("video_author")
+  jumpUrl       String    @default("") @map("video_jumpurl")
+  tpl           String    @default("") @map("video_tpl")
+  tplPlay       String    @default("") @map("video_tpl_play")
+  tplDown       String    @default("") @map("video_tpl_down")
+  isend         Int       @default(0) @map("video_isend")
+  lock          Int       @default(0) @map("video_lock")
+  level         Int       @default(0) @map("video_level")
+  copyright     Int       @default(0) @map("video_copyright")
+  points        Int       @default(0) @map("video_points")
+  pointsPlay    Int       @default(0) @map("video_points_play")
+  pointsDown    Int       @default(0) @map("video_points_down")
+  hits          Int       @default(0) @map("video_hits")
+  hitsDay       Int       @default(0) @map("video_hits_day")
+  hitsWeek      Int       @default(0) @map("video_hits_week")
+  hitsMonth     Int       @default(0) @map("video_hits_month")
+  duration      String    @default("") @map("video_duration")
+  up            Int       @default(0) @map("video_up")
+  down          Int       @default(0) @map("video_down")
+  score         Decimal   @default(0) @map("video_score") @db.Decimal(3,1)
+  scoreAll      Int       @default(0) @map("video_score_all")
+  scoreNum      Int       @default(0) @map("video_score_num")
+  time          Int       @default(0) @map("video_time")
+  timeAdd       Int       @default(0) @map("video_time_add")
+  timeHits      Int       @default(0) @map("video_time_hits")
+  timeMake      Int       @default(0) @map("video_time_make")
+  trysee        Int       @default(0) @map("video_trysee")
+  doubanId      Int       @default(0) @map("video_douban_id")
+  doubanScore   Decimal   @default(0) @map("video_douban_score") @db.Decimal(3,1)
+  reurl         String    @default("") @map("video_reurl")
+  relVod        String    @default("") @map("video_rel_vod")
+  relArt        String    @default("") @map("video_rel_art")
+  pwd           String    @default("") @map("video_pwd")
+  pwdUrl        String    @default("") @map("video_pwd_url")
+  pwdPlay       String    @default("") @map("video_pwd_play")
+  pwdPlayUrl    String    @default("") @map("video_pwd_play_url")
+  pwdDown       String    @default("") @map("video_pwd_down")
+  pwdDownUrl    String    @default("") @map("video_pwd_down_url")
+  content       String    @map("video_content") @db.Text
+  playFrom      String    @default("") @map("video_play_from")
+  playServer    String    @default("") @map("video_play_server")
+  playNote      String    @default("") @map("video_play_note")
+  playUrl       String    @map("video_play_url") @db.MediumText
+  downFrom      String    @default("") @map("video_down_from")
+  downServer    String    @default("") @map("video_down_server")
+  downNote      String    @default("") @map("video_down_note")
+  downUrl       String    @map("video_down_url") @db.MediumText
+  plot          Int       @default(0) @map("video_plot")
+  plotName      String    @map("video_plot_name") @db.MediumText
+  plotDetail    String    @map("video_plot_detail") @db.MediumText
+
+  @@map("next_video")
+  @@index([typeId])
+  @@index([typeId1])
+  @@index([level])
+  @@index([hits])
+  @@index([letter])
+  @@index([name])
+  @@index([year])
+  @@index([area])
+  @@index([lang])
+  @@index([tag])
+  @@index([class])
+  @@index([lock])
+  @@index([up])
+  @@index([down])
+  @@index([enName])
+  @@index([hitsDay])
+  @@index([hitsWeek])
+  @@index([hitsMonth])
+  @@index([plot])
+  @@index([pointsPlay])
+  @@index([pointsDown])
+  @@index([groupId])
+  @@index([timeAdd])
+  @@index([time])
+  @@index([timeMake])
+  @@index([actor])
+  @@index([director])
+  @@index([scoreAll])
+  @@index([scoreNum])
+  @@index([total])
+  @@index([score])
+  @@index([version])
+  @@index([state])
+  @@index([isend])
+}
