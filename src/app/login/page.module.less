@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: auto;
+  background: #f0f2f5;
+}
+
+.content {
+  flex: 1;
+  padding: 32px 0;
+}
+
+.top {
+  text-align: center;
+}
+
+.header {
+  height: 44px;
+  line-height: 44px;
+}
+
+.title {
+  position: relative;
+  top: 2px;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 600;
+  font-size: 33px;
+  font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.desc {
+  margin-top: 12px;
+  margin-bottom: 40px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+}
+
+.main {
+  width: 328px;
+  margin: 0 auto;
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 24px;
+    }
+  }
+}
+
+.button {
+  width: 100%;
+}
+
+[data-theme='dark'] {
+  .container {
+    background: #141414;
+  }
+
+  .title {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .desc {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}

@@ -19,9 +19,12 @@ const nextConfig = {
     'rc-checkbox',
     'rc-dropdown',
     'rc-menu',
-    'rc-switch'
   ],
+  experimental: {
+    appDir: true,
+    serverActions: true,
+  },
   reactStrictMode: true,
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;

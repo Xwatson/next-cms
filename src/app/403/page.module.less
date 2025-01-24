@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0 24px;
+  background: #f0f2f5;
+}
+
+.content {
+  max-width: 560px;
+  text-align: center;
+}
+
+.title {
+  color: #434e59;
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.subtitle {
+  color: #434e59;
+  font-size: 20px;
+  line-height: 28px;
+  margin: 16px 0 24px;
+}
+
+[data-theme='dark'] {
+  .container {
+    background: #141414;
+  }
+
+  .title,
+  .subtitle {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}

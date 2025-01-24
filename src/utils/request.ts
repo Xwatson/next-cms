@@ -42,6 +42,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
+      console.error("response error: ", error.response);
       const { status, data } = error.response;
       switch (status) {
         case 401:
@@ -61,7 +62,7 @@ instance.interceptors.response.use(
           message.error("服务器错误");
           break;
         default:
-          message.error(data?.message || "请求失败");
+          message.error(data?.msg || data?.message || "请求失败");
       }
     } else if (error.request) {
       message.error("网络错误");

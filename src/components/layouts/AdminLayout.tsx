@@ -1,74 +1,71 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
   DashboardOutlined,
-  SettingOutlined,
   FileTextOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, Button, theme, Dropdown, message } from "antd";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { logout } from "@/services/auth";
+  TeamOutlined,
+  SettingOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Layout, Menu, Button, theme, Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { Header, Sider, Content } = Layout;
 
-const menuItems = [
-  {
-    key: "/admin",
-    icon: <DashboardOutlined />,
-    label: "控制台",
-  },
-  {
-    key: "/admin/user_management",
-    icon: <UserOutlined />,
-    label: "用户管理",
-    children: [
-      {
-        key: "/admin/users",
-        icon: <UserOutlined />,
-        label: "用户管理",
-      },
-      {
-        key: "/admin/roles",
-        icon: <UserOutlined />,
-        label: "角色管理",
-      },
-    ],
-  },
-  {
-    key: "/admin/content",
-    icon: <FileTextOutlined />,
-    label: "内容管理",
-    children: [
-      {
-        key: "/admin/content/articles",
-        label: "文章管理",
-      },
-      {
-        key: "/admin/content/categories",
-        label: "分类管理",
-      },
-    ],
-  },
-  {
-    key: "/admin/settings",
-    icon: <SettingOutlined />,
-    label: "系统设置",
-  },
+type MenuItem = Required<MenuProps>['items'][number];
+
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem;
+}
+
+const items: MenuItem[] = [
+  getItem('仪表盘', '/admin/dashboard', <DashboardOutlined />),
+  getItem('用户管理', '/admin/user_management', <TeamOutlined />, [
+    getItem('用户列表', '/admin/users'),
+    getItem('角色管理', '/admin/roles'),
+  ]),
+  getItem('内容管理', 'content', <FileTextOutlined />, [
+    getItem('文章列表', '/admin/content/articles'),
+    getItem('分类管理', '/admin/content/categories'),
+    getItem('标签管理', '/admin/content/tags'),
+  ]),
+  getItem('系统设置', '/admin/settings', <SettingOutlined />),
 ];
 
-const userMenuItems = [
+const userMenuItems: MenuProps['items'] = [
   {
-    key: "profile",
-    label: "个人信息",
+    key: 'profile',
+    icon: <UserOutlined />,
+    label: '个人信息',
   },
   {
-    key: "logout",
-    label: "退出登录",
+    key: 'settings',
+    icon: <SettingOutlined />,
+    label: '账号设置',
+  },
+  {
+    type: 'divider',
+  },
+  {
+    key: 'logout',
+    icon: <LogoutOutlined />,
+    label: '退出登录',
   },
 ];
 
@@ -79,78 +76,55 @@ export default function AdminLayout({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const { logout } = useAuth();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      message.success("退出登录成功");
-      router.push("/login");
-    } catch (error) {
-      // 错误已在 request 中处理
-      console.error("Logout error:", error);
-    }
-  };
-
-  const handleUserMenuClick = ({ key }: { key: string }) => {
-    if (key === "logout") {
-      handleLogout();
+  const handleMenuClick = (e: { key: string }) => {
+    if (e.key === 'logout') {
+      logout();
+    } else {
+      router.push(e.key);
     }
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-            background: "rgba(255, 255, 255, 0.2)",
-          }}
-        />
+        <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={[router.pathname]}
-          items={menuItems}
+          defaultSelectedKeys={[pathname]}
+          items={items}
           onClick={({ key }) => router.push(key)}
         />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          <div
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingRight: 24,
+              fontSize: '16px',
+              width: 64,
+              height: 64,
             }}
-          >
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
-            />
-            <Dropdown
-              menu={{
-                items: userMenuItems,
-                onClick: handleUserMenuClick,
-              }}
-            >
-              <Button icon={<UserOutlined />}>用户</Button>
+          />
+          <div style={{ float: 'right', marginRight: '24px' }}>
+            <Dropdown menu={{ items: userMenuItems, onClick: handleMenuClick }}>
+              <Button type="text" icon={<UserOutlined />}>
+                管理员
+              </Button>
             </Dropdown>
           </div>
         </Header>
         <Content
           style={{
-            margin: "24px 16px",
+            margin: '24px 16px',
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
