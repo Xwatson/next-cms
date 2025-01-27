@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { compare } from "bcryptjs";
-import { generateToken, setTokenCookie } from "@/utils/auth";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+import { SignJWT } from "jose";
+import { getJwtSecretKey } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 验证密码
-    const isValid = await compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return NextResponse.json(
         {
@@ -64,12 +63,14 @@ export async function POST(req: NextRequest) {
     });
 
     // 生成 token
-    const token = await generateToken({
+    const token = await new SignJWT({
       id: user.id.toString(),
       name: user.name!,
       email: user.email,
       roleStr: user.role.code,
-    });
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .sign(getJwtSecretKey());
 
     // 创建响应
     const response = NextResponse.json({
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 设置 cookie
-    setTokenCookie(response, token);
+    // setTokenCookie(response, token);
 
     return response;
   } catch (error) {

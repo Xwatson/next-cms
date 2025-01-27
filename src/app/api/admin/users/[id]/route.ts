@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
 
 export async function PUT(
   req: NextRequest,
@@ -54,6 +52,8 @@ export async function PUT(
   } catch (error) {
     console.error("更新用户失败:", error);
     return NextResponse.json({ code: 1, msg: "更新用户失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -74,5 +74,7 @@ export async function DELETE(
   } catch (error) {
     console.error("删除用户失败:", error);
     return NextResponse.json({ code: 1, msg: "删除用户失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

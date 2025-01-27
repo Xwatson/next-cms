@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { UserStatus, UserCreateInput } from "@/types/user";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import { UserStatus, UserCreateInput } from "@/types/user";
 
 // GET 处理器
 export async function GET(req: NextRequest) {
@@ -74,6 +72,8 @@ export async function GET(req: NextRequest) {
       { code: 1, msg: "获取用户列表失败" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -139,5 +139,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("创建用户失败:", error);
     return NextResponse.json({ code: 1, msg: "创建用户失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

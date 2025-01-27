@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   req: NextRequest,
@@ -44,6 +42,8 @@ export async function PUT(
   } catch (error) {
     console.error("更新角色失败:", error);
     return NextResponse.json({ code: 1, msg: "更新角色失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -72,5 +72,7 @@ export async function DELETE(
   } catch (error) {
     console.error("删除角色失败:", error);
     return NextResponse.json({ code: 1, msg: "删除角色失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

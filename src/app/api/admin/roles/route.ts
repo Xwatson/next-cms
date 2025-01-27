@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -49,6 +47,8 @@ export async function GET(req: NextRequest) {
       { code: 1, msg: "获取角色列表失败" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -104,5 +104,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("创建角色失败:", error);
     return NextResponse.json({ code: 1, msg: "创建角色失败" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
