@@ -53,12 +53,33 @@ model Permission {
   id          Int      @id @default(autoincrement()) @map("permission_id")
   name        String   @map("permission_name")
   code        String   @unique @map("permission_code")
+  type        String   @map("permission_type")
   description String?  @map("permission_description") @db.Text
   roles       Role[]   @relation("RolePermissions")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("next_permissions")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement()) @map("category_id")
+  name        String    @map("category_name")
+  code        String    @unique @map("category_code")
+  parentId    Int?      @map("parent_id")
+  sort        Int       @default(0) @map("category_sort")
+  description String?   @map("category_description") @db.Text
+  seoTitle    String?   @map("seo_title") @db.Text
+  seoKeywords String?   @map("seo_keywords") @db.Text
+  seoDesc     String?   @map("seo_description") @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  parent      Category? @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryToCategory")
+
+  @@index([parentId])
+  @@index([sort])
+  @@map("next_category")
 }
 
 model Video {

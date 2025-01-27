@@ -40,9 +40,9 @@ const items: MenuItem[] = [
     getItem('用户列表', '/admin/users'),
     getItem('角色管理', '/admin/roles'),
   ]),
+  getItem('分类管理', '/admin/categories', <FileTextOutlined />),
   getItem('内容管理', 'content', <FileTextOutlined />, [
     getItem('文章列表', '/admin/content/articles'),
-    getItem('分类管理', '/admin/content/categories'),
     getItem('标签管理', '/admin/content/tags'),
   ]),
   getItem('系统设置', '/admin/settings', <SettingOutlined />),
