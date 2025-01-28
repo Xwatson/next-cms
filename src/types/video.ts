@@ -1,6 +1,6 @@
 export interface Video {
   id: number;
-  typeId: number;
+  categoryId: number;
   typeId1: number;
   groupId: number;
   name: string;
@@ -83,11 +83,19 @@ export interface Video {
   plotDetail: string;
 }
 
-export interface VideoCreateInput extends Partial<Omit<Video, 'id'>> {
+export interface VideoCreateInput extends Partial<Omit<Video, "id">> {
   name: string;
-  typeId: number;
+  categoryId: number;
 }
 
 export interface VideoUpdateInput extends Partial<Video> {
   id: number;
+}
+
+export interface VideoListParams {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  categoryId?: number;
+  status?: number;
 }

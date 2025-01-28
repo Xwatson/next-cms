@@ -41,7 +41,10 @@ const items: MenuItem[] = [
     getItem('角色管理', '/admin/roles'),
   ]),
   getItem('分类管理', '/admin/categories', <FileTextOutlined />),
-  getItem('内容管理', 'content', <FileTextOutlined />, [
+  getItem('视频管理', '/admin/video_management', <FileTextOutlined />, [
+    getItem('视频列表', '/admin/videos'),
+  ]),
+  getItem('文章管理', 'content', <FileTextOutlined />, [
     getItem('文章列表', '/admin/content/articles'),
     getItem('标签管理', '/admin/content/tags'),
   ]),

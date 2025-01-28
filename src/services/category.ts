@@ -1,6 +1,11 @@
 import request from "@/utils/request";
 import { DataResult } from "@/types/api";
-import { Category, CategoryCreateInput, CategoryListParams, CategoryUpdateInput } from "@/types/category";
+import {
+  Category,
+  CategoryCreateInput,
+  CategoryListParams,
+  CategoryUpdateInput,
+} from "@/types/category";
 
 export const getCategoryList = (params?: CategoryListParams) => {
   return request.get<DataResult<Category[]>>("/admin/categories", {
